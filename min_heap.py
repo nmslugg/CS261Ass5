@@ -40,46 +40,57 @@ class MinHeap:
         return 'HEAP ' + str(heap_data)
 
     def add(self, node: object) -> None:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        self._heap.append(node)
+        i = self._heap.length() - 1
+        while i > 0:
+            if self._heap[(i-1)//2] > self._heap[i]:
+                c = self._heap[(i-1)//2]
+                self._heap[(i-1)//2] = self._heap[i]
+                self._heap[i] = c
+                i = (i-1)//2
+            else:
+                i = -2
 
     def is_empty(self) -> bool:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        return self._heap.length() == 0
 
     def get_min(self) -> object:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        return self._heap[0]
 
     def remove_min(self) -> object:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        if self._heap.length() == 0:
+            raise MinHeapException
+        r = self._heap[0]
+        self._heap[0] = self._heap[self._heap.length()-1]
+        self._heap.remove_at_index(self._heap.length()-1)
+        cont = True
+        parent = 0
+        while cont:
+            if self._heap.length() - 1 < max(2*parent + 1, 2*parent + 2):
+                break
+            if self._heap[parent] > self._heap[2*parent + 1]:
+                _percolate_down(self._heap, parent)
+                parent = 2*parent + 1
+            elif self._heap[parent] > self._heap[2*parent + 2]:
+                _percolate_down(self._heap, parent)
+                parent = 2*parent + 2
+            else:
+                cont = False
+        return r
 
     def build_heap(self, da: DynamicArray) -> None:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        self._heap = DynamicArray()
+        for item in da:
+            self._heap.append(item)
+        print(self._heap.length()//2 - 1)
+        for i in range(self._heap.length()//2 - 1, -1, -1):
+            _percolate_down(self._heap, i)
 
     def size(self) -> int:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        return self._heap.length()
 
     def clear(self) -> None:
-        """
-        TODO: Write this implementation
-        """
-        pass
+        self._heap = DynamicArray()
 
 
 def heapsort(da: DynamicArray) -> None:
@@ -94,10 +105,15 @@ def heapsort(da: DynamicArray) -> None:
 # this from inside the MinHeap class. You may edit the function definition.  #
 
 def _percolate_down(da: DynamicArray, parent: int) -> None:
-    """
-    TODO: Write your implementation
-    """
-    pass
+    if da[parent] > min(da[2*parent + 1], da[2*parent+2]):
+        if da[2*parent + 1] == min(da[2*parent + 1], da[2*parent+2]):
+            c = da[2*parent + 1]
+            da[2*parent + 1] = da[parent]
+            da[parent] = c
+        else:
+            c = da[2*parent + 2]
+            da[2 * parent + 2] = da[parent]
+            da[parent] = c
 
 
 # ------------------- BASIC TESTING -----------------------------------------
