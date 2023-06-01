@@ -65,10 +65,7 @@ class MinHeap:
         r = self._heap[0]
         self._heap[0] = self._heap[self._heap.length()-1]
         self._heap.remove_at_index(self._heap.length()-1)
-        cont = True
-        parent = 0
-        while parent >= 0:
-            parent = _percolate_down(self._heap, parent)
+        _percolate_down(self._heap, 0)
         return r
 
     def build_heap(self, da: DynamicArray) -> None:
@@ -76,9 +73,7 @@ class MinHeap:
         for item in da:
             self._heap.append(item)
         for i in range(self._heap.length()//2 - 1, -1, -1):
-            parent = _percolate_down(self._heap, i)
-            if parent != -1:
-                _percolate_down(self._heap, parent)
+            _percolate_down(self._heap, i)
 
     def size(self) -> int:
         return self._heap.length()
@@ -88,41 +83,37 @@ class MinHeap:
 
 
 def heapsort(da: DynamicArray) -> None:
-    """
-    TODO: Write this implementation
-    """
-    pass
+    k = da.length() - 1
 
 
 # It's highly recommended that you implement the following optional          #
 # function for percolating elements down the MinHeap. You can call           #
 # this from inside the MinHeap class. You may edit the function definition.  #
 
-def _percolate_down(da: DynamicArray, parent: int) -> int:
-    if 2*parent + 1 > da.length() - 1:
-        return -1
-    elif (2*parent + 1 <= da.length()-1) and (2*parent + 2 > da.length()-1):
-        if da[2*parent+1] < da[parent]:
-            c = da[parent]
-            da[parent] = da[2*parent + 1]
-            da[2*parent+1] = c
-            return 2*parent + 1
+def _percolate_down(da: DynamicArray, parent: int) -> None:
+    while parent >= 0:
+        l = 2*parent + 1
+        r = 2*parent + 2
+        if l > da.length()-1:
+            parent = -1
+        elif (r > da.length()-1) and da[parent] > da[l]:
+            c = da[l]
+            da[l] = da[parent]
+            da[parent] = c
+            parent = l
+        elif (r <= da.length()-1) and da[parent] > min(da[l], da[r]):
+            if da[l] == min(da[l], da[r]):
+                c = da[l]
+                da[l] = da[parent]
+                da[parent] = c
+                parent = l
+            else:
+                c = da[r]
+                da[r] = da[parent]
+                da[parent] = c
+                parent = r
         else:
-            return -1
-    elif da[parent] > min(da[2*parent + 1], da[2*parent+2]):
-        if da[2*parent + 1] == min(da[2*parent + 1], da[2*parent+2]):
-            c = da[parent]
-            da[parent] = da[2 * parent + 1]
-            da[2 * parent + 1] = c
-            return 2 * parent + 1
-        else:
-            c = da[parent]
-            da[parent] = da[2 * parent + 2]
-            da[2 * parent + 2] = c
-            return 2 * parent + 2
-    else:
-        return -1
-
+            parent = -1
 
 # ------------------- BASIC TESTING -----------------------------------------
 
@@ -178,7 +169,7 @@ if __name__ == '__main__':
 
     print('\nPDF - build_heap example 2')
     print("--------------------------")
-    da = DynamicArray([-46509, -44217, -74162, 75737, -49175, -94853, 77568, -53618, 14882, 16312])
+    da = DynamicArray(["hDuJWH_N", "fee", "g\e^ZrzGfs", "wYNH^sPqEi", "r[lryUwBb", "Kg", "'mTQO", "KAUZcw", "fee"])
     h = MinHeap(['zebra', 'apple'])
     print(h)
     h.build_heap(da)
