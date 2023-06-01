@@ -83,25 +83,36 @@ class MinHeap:
 
 
 def heapsort(da: DynamicArray) -> None:
-    k = da.length() - 1
+
+    for i in range(da.length() // 2 - 1, -1, -1):
+        _percolate_down(da, i)
+
+    for i in range(da.length()-1, -1, -1):
+        c = da[0]
+        da[0] = da[i]
+        da[i] = c
+        _percolate_down(da, 0, i-1)
+
 
 
 # It's highly recommended that you implement the following optional          #
 # function for percolating elements down the MinHeap. You can call           #
 # this from inside the MinHeap class. You may edit the function definition.  #
 
-def _percolate_down(da: DynamicArray, parent: int) -> None:
+def _percolate_down(da: DynamicArray, parent: int, maxdepth=None) -> None:
+    if maxdepth is None:
+        maxdepth = da.length()-1
     while parent >= 0:
         l = 2*parent + 1
         r = 2*parent + 2
-        if l > da.length()-1:
+        if l > maxdepth:
             parent = -1
-        elif (r > da.length()-1) and da[parent] > da[l]:
+        elif (r > maxdepth) and da[parent] > da[l]:
             c = da[l]
             da[l] = da[parent]
             da[parent] = c
             parent = l
-        elif (r <= da.length()-1) and da[parent] > min(da[l], da[r]):
+        elif (r <= maxdepth) and da[parent] > min(da[l], da[r]):
             if da[l] == min(da[l], da[r]):
                 c = da[l]
                 da[l] = da[parent]
