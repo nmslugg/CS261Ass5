@@ -75,9 +75,10 @@ class MinHeap:
         self._heap = DynamicArray()
         for item in da:
             self._heap.append(item)
-        print(self._heap.length()//2 - 1)
         for i in range(self._heap.length()//2 - 1, -1, -1):
-            _percolate_down(self._heap, i)
+            parent = _percolate_down(self._heap, i)
+            if parent != -1:
+                _percolate_down(self._heap, parent)
 
     def size(self) -> int:
         return self._heap.length()
@@ -170,6 +171,14 @@ if __name__ == '__main__':
     print("\nPDF - build_heap example 1")
     print("--------------------------")
     da = DynamicArray([100, 20, 6, 200, 90, 150, 300])
+    h = MinHeap(['zebra', 'apple'])
+    print(h)
+    h.build_heap(da)
+    print(h)
+
+    print('\nPDF - build_heap example 2')
+    print("--------------------------")
+    da = DynamicArray([-46509, -44217, -74162, 75737, -49175, -94853, 77568, -53618, 14882, 16312])
     h = MinHeap(['zebra', 'apple'])
     print(h)
     h.build_heap(da)
