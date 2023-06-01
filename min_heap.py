@@ -1,9 +1,9 @@
-# Name:
-# OSU Email:
+# Name: Nicholas Slugg
+# OSU Email: sluggn@oregonstate.edu
 # Course: CS261 - Data Structures
-# Assignment:
-# Due Date:
-# Description:
+# Assignment: 5
+# Due Date: 05-31-22 (I used one late day)
+# Description: This program implements a minimum heap using a dynamic array.
 
 
 from dynamic_array import *
@@ -40,90 +40,93 @@ class MinHeap:
         return 'HEAP ' + str(heap_data)
 
     def add(self, node: object) -> None:
-        self._heap.append(node)
-        i = self._heap.length() - 1
-        while i > 0:
-            if self._heap[(i-1)//2] > self._heap[i]:
+        """Adds a value to a heap"""
+        self._heap.append(node)  # append node to array
+        i = self._heap.length() - 1  # start at new value
+        while i > 0:  # percolate value upwards
+            if self._heap[(i-1)//2] > self._heap[i]:  # switch values if parent is less
                 c = self._heap[(i-1)//2]
                 self._heap[(i-1)//2] = self._heap[i]
                 self._heap[i] = c
                 i = (i-1)//2
-            else:
-                i = -2
+            else:  # change to negative one to stop percolation
+                i = -1
 
     def is_empty(self) -> bool:
-        return self._heap.length() == 0
+        """Returns True if the heap is empty, False otherwise"""
+        return self._heap.length() == 0  # true if the length of underlying array is zero
 
     def get_min(self) -> object:
-        if self._heap.is_empty():
+        """Returns the minimum of a heap, raising exception if the heap is empty"""
+        if self._heap.is_empty():  # raise exception if empty
             raise MinHeapException
-        return self._heap[0]
+        return self._heap[0]  # Minimum value is at head of heap
 
     def remove_min(self) -> object:
+        """Removes the minimum value and restores heap structure, returning the value removed"""
         if self._heap.length() == 0:
-            raise MinHeapException
-        r = self._heap[0]
-        self._heap[0] = self._heap[self._heap.length()-1]
-        self._heap.remove_at_index(self._heap.length()-1)
-        _percolate_down(self._heap, 0)
-        return r
+            raise MinHeapException  # raises exception if it is empty
+        r = self._heap[0]  # stores value to be returned
+        self._heap[0] = self._heap[self._heap.length()-1]  # switches with end of array
+        self._heap.remove_at_index(self._heap.length()-1)  # removes value at end
+        _percolate_down(self._heap, 0)  # percolates top value down
+        return r  # returns stored value
 
     def build_heap(self, da: DynamicArray) -> None:
-        self._heap = DynamicArray()
+        """Builds a heap from a provided dynamic array"""
+        self._heap = DynamicArray()  # stores new dynamic array
         for item in da:
-            self._heap.append(item)
+            self._heap.append(item)  # iterates through array adding value
         for i in range(self._heap.length()//2 - 1, -1, -1):
-            _percolate_down(self._heap, i)
+            _percolate_down(self._heap, i)  # percolates values of heap down for each non leaf value
 
     def size(self) -> int:
-        return self._heap.length()
+        """Returns the length of a heap"""
+        return self._heap.length()  # returns length
 
     def clear(self) -> None:
-        self._heap = DynamicArray()
+        """Clears contents of heap"""
+        self._heap = DynamicArray()  # change heap to empty dynamic array
 
 
 def heapsort(da: DynamicArray) -> None:
-
+    """Sorts contents of array into nonascending order using heapsort algorithm"""
     for i in range(da.length() // 2 - 1, -1, -1):
-        _percolate_down(da, i)
+        _percolate_down(da, i)  # percolates each non leaf value to attain heap structure
 
     for i in range(da.length()-1, -1, -1):
-        c = da[0]
-        da[0] = da[i]
+        c = da[0]  # stores end of array
+        da[0] = da[i]  # swaps end with front
         da[i] = c
-        _percolate_down(da, 0, i-1)
+        _percolate_down(da, 0, i-1)  # percolates front down, up to value replaced
 
-
-
-# It's highly recommended that you implement the following optional          #
-# function for percolating elements down the MinHeap. You can call           #
-# this from inside the MinHeap class. You may edit the function definition.  #
 
 def _percolate_down(da: DynamicArray, parent: int, maxdepth=None) -> None:
+    """Percolates down a dynamic array in order to preserve heap structure"""
     if maxdepth is None:
-        maxdepth = da.length()-1
-    while parent >= 0:
-        l = 2*parent + 1
+        maxdepth = da.length()-1  # initialize max depth of array, this is initial value unless another is specified
+    while parent >= 0:  # iterate through until heap structure is achieved
+        l = 2*parent + 1  # store values for left and right of parent
         r = 2*parent + 2
         if l > maxdepth:
-            parent = -1
-        elif (r > maxdepth) and da[parent] > da[l]:
-            c = da[l]
+            parent = -1  # case where there are no more children
+        elif (r > maxdepth) and da[parent] > da[l]:  # case where there is one child and they need to be swapped
+            c = da[l]  # swaps parent and child values
             da[l] = da[parent]
             da[parent] = c
-            parent = l
-        elif (r <= maxdepth) and da[parent] > min(da[l], da[r]):
-            if da[l] == min(da[l], da[r]):
-                c = da[l]
+            parent = l  # new parent value is left child
+        elif (r <= maxdepth) and da[parent] > min(da[l], da[r]):  # two children, at least one needs to be swapped
+            if da[l] == min(da[l], da[r]):  # if left is to be swapped
+                c = da[l]  # swaps parent and left
                 da[l] = da[parent]
                 da[parent] = c
-                parent = l
-            else:
-                c = da[r]
+                parent = l  # changes parent to left child
+            else:  # case where right is to be swapped
+                c = da[r]  # swaps parent and right child
                 da[r] = da[parent]
                 da[parent] = c
-                parent = r
-        else:
+                parent = r  # new parent is right child
+        else:  # in all other cases, heap status is reached, and iteration can be ended
             parent = -1
 
 # ------------------- BASIC TESTING -----------------------------------------
