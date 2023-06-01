@@ -55,6 +55,8 @@ class MinHeap:
         return self._heap.length() == 0
 
     def get_min(self) -> object:
+        if self._heap.is_empty():
+            raise MinHeapException
         return self._heap[0]
 
     def remove_min(self) -> object:
@@ -65,17 +67,8 @@ class MinHeap:
         self._heap.remove_at_index(self._heap.length()-1)
         cont = True
         parent = 0
-        while cont:
-            if self._heap.length() - 1 < max(2*parent + 1, 2*parent + 2):
-                break
-            if self._heap[parent] > self._heap[2*parent + 1]:
-                _percolate_down(self._heap, parent)
-                parent = 2*parent + 1
-            elif self._heap[parent] > self._heap[2*parent + 2]:
-                _percolate_down(self._heap, parent)
-                parent = 2*parent + 2
-            else:
-                cont = False
+        while parent >= 0:
+            parent = _percolate_down(self._heap, parent)
         return r
 
     def build_heap(self, da: DynamicArray) -> None:
@@ -104,16 +97,30 @@ def heapsort(da: DynamicArray) -> None:
 # function for percolating elements down the MinHeap. You can call           #
 # this from inside the MinHeap class. You may edit the function definition.  #
 
-def _percolate_down(da: DynamicArray, parent: int) -> None:
-    if da[parent] > min(da[2*parent + 1], da[2*parent+2]):
-        if da[2*parent + 1] == min(da[2*parent + 1], da[2*parent+2]):
-            c = da[2*parent + 1]
-            da[2*parent + 1] = da[parent]
-            da[parent] = c
+def _percolate_down(da: DynamicArray, parent: int) -> int:
+    if 2*parent + 1 > da.length() - 1:
+        return -1
+    elif (2*parent + 1 <= da.length()-1) and (2*parent + 2 > da.length()-1):
+        if da[2*parent+1] < da[parent]:
+            c = da[parent]
+            da[parent] = da[2*parent + 1]
+            da[2*parent+1] = c
+            return 2*parent + 1
         else:
-            c = da[2*parent + 2]
-            da[2 * parent + 2] = da[parent]
-            da[parent] = c
+            return -1
+    elif da[parent] > min(da[2*parent + 1], da[2*parent+2]):
+        if da[2*parent + 1] == min(da[2*parent + 1], da[2*parent+2]):
+            c = da[parent]
+            da[parent] = da[2 * parent + 1]
+            da[2 * parent + 1] = c
+            return 2 * parent + 1
+        else:
+            c = da[parent]
+            da[parent] = da[2 * parent + 2]
+            da[2 * parent + 2] = c
+            return 2 * parent + 2
+    else:
+        return -1
 
 
 # ------------------- BASIC TESTING -----------------------------------------
